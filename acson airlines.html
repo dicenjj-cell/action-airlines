@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acson International Airport | Premium Online Booking</title>
+  <style>
+    :root{
+      --navy:#07152f;
+      --navy2:#0b1f46;
+      --blue:#1d4ed8;
+      --sky:#38bdf8;
+      --gold:#d6a84f;
+      --cream:#f8fafc;
+      --muted:#64748b;
+      --green:#16a34a;
+      --red:#dc2626;
+      --card:#ffffff;
+      --shadow:0 25px 70px rgba(2,8,23,.18);
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box;font-family:Inter,Segoe UI,Arial,sans-serif}
+    body{background:#f3f7ff;color:#0f172a}
+    html{scroll-behavior:smooth}
+
+    header{
+      position:sticky;top:0;z-index:1000;
+      background:rgba(7,21,47,.88);
+      backdrop-filter:blur(18px);
+      color:white;padding:16px 7%;
+      display:flex;justify-content:space-between;align-items:center;
+      border-bottom:1px solid rgba(255,255,255,.12)
+    }
+
+    .logo{display:flex;align-items:center;gap:12px;font-weight:900;font-size:22px;letter-spacing:.3px}
+    .logo-icon{
+      width:42px;height:42px;border-radius:50%;
+      background:linear-gradient(135deg,var(--sky),var(--gold));
+      display:grid;place-items:center;color:#07152f;font-size:22px;
+      box-shadow:0 10px 30px rgba(56,189,248,.35)
+    }
+
+    nav a{
+      color:#e2e8f0;text-decoration:none;margin-left:24px;
+      font-weight:700;font-size:14px;cursor:pointer;transition:.2s
+    }
+    nav a:hover{color:var(--gold)}
+
+    section{display:none;padding:65px 7%}
+    section.active{display:block}
+
+    .home{
+      min-height:88vh;
+      background:
+        radial-gradient(circle at top right, rgba(56,189,248,.30), transparent 35%),
+        linear-gradient(110deg, rgba(7,21,47,.98), rgba(29,78,216,.85));
+      background-size:cover;background-position:center;
+      color:white;display:none;align-items:center;
+      grid-template-columns:1.1fr .9fr;gap:45px
+    }
+    .home.active{display:grid}
+    .badge{
+      display:inline-flex;gap:8px;align-items:center;
+      background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);
+      padding:10px 16px;border-radius:999px;margin-bottom:22px;
+      color:#dbeafe;font-weight:700
+    }
+    .home h1{font-size:64px;line-height:1.02;margin-bottom:20px;max-width:760px}
+    .home p{font-size:19px;color:#dbeafe;line-height:1.7;max-width:680px;margin-bottom:30px}
+    .hero-actions{display:flex;gap:14px;flex-wrap:wrap}
+    button{
+      padding:15px 22px;border:0;border-radius:16px;background:var(--blue);
+      color:white;font-weight:900;font-size:15px;cursor:pointer;transition:.2s
+    }
+    button:hover{transform:translateY(-2px);box-shadow:0 16px 35px rgba(29,78,216,.28)}
+    .btn-gold{background:linear-gradient(135deg,var(--gold),#facc15);color:#172554}
+    .btn-dark{background:#0f172a}
+    .btn-light{background:#e0f2fe;color:#075985}
+    .btn-danger{background:var(--red)}
+
+    .premium-card{
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.18);
+      backdrop-filter:blur(22px);
+      border-radius:32px;padding:34px;box-shadow:var(--shadow)
+    }
+    .boarding-preview{
+      background:white;color:#0f172a;border-radius:28px;padding:26px;
+      box-shadow:0 25px 80px rgba(0,0,0,.35);
+      transform:rotate(-1.5deg)
+    }
+    .boarding-preview h3{font-size:28px;color:var(--navy);margin-bottom:16px}
+    .preview-row{display:flex;justify-content:space-between;border-bottom:1px solid #e2e8f0;padding:12px 0}
+    .preview-row span:last-child{font-weight:900;color:var(--blue)}
+
+    .page-title{text-align:center;margin-bottom:38px}
+    .page-title h2{font-size:42px;color:var(--navy);margin-bottom:10px}
+    .page-title p{color:var(--muted);font-size:17px}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px}
+    .flight-card,.info-card,.glass,.contact-card{
+      background:var(--card);border-radius:28px;padding:28px;box-shadow:var(--shadow);
+      border:1px solid rgba(226,232,240,.9)
+    }
+    .flight-card{position:relative;overflow:hidden}
+    .flight-card:before{
+      content:"";position:absolute;inset:0 0 auto 0;height:6px;
+      background:linear-gradient(90deg,var(--sky),var(--gold),var(--blue))
+    }
+    .flight-card h3{font-size:24px;color:var(--navy);margin-bottom:14px}
+    .flight-meta{color:var(--muted);line-height:1.8}
+    .price{font-size:30px;font-weight:950;color:var(--green);margin:18px 0}
+
+    .reservation-box{display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:start}
+    label{display:block;margin-top:15px;font-weight:900;color:#1e293b}
+    input,select{
+      width:100%;padding:15px;margin-top:8px;border:1px solid #cbd5e1;
+      border-radius:16px;font-size:15px;background:#f8fafc;outline:none
+    }
+    input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,99,235,.12)}
+
+    .seats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:15px}
+    .seat{
+      padding:14px;text-align:center;background:#dbeafe;color:#1e3a8a;
+      border-radius:14px;font-weight:950;cursor:pointer;border:2px solid transparent
+    }
+    .seat:hover{border-color:var(--blue)}
+    .seat.selected{background:linear-gradient(135deg,var(--blue),var(--sky));color:white}
+    .seat.booked{background:#ef4444;color:white;cursor:not-allowed}
+
+    .status-pill{
+      display:inline-flex;padding:7px 12px;border-radius:999px;
+      background:#dcfce7;color:#166534;font-weight:900;font-size:12px
+    }
+
+    .modal{display:none;position:fixed;inset:0;background:rgba(2,6,23,.78);z-index:2000;align-items:center;justify-content:center;padding:20px}
+    .modal.active{display:flex}
+    .modal-content{background:white;color:#111827;max-width:560px;width:100%;border-radius:32px;padding:30px;box-shadow:0 35px 100px rgba(0,0,0,.55)}
+    .payment-options{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:20px 0}
+    .pay{background:#eff6ff;color:#1e3a8a;border:2px solid #bfdbfe}
+    .pay.selected{background:linear-gradient(135deg,var(--blue),var(--sky));color:white}
+
+    .ticket{
+      display:none;background:linear-gradient(135deg,#ffffff,#eff6ff);
+      border:2px dashed var(--blue);border-radius:26px;padding:26px;margin-top:22px
+    }
+    .ticket h3{font-size:28px;color:var(--navy);margin-bottom:14px}
+    .ticket-row{display:flex;justify-content:space-between;gap:14px;border-bottom:1px solid #bfdbfe;padding:10px 0}
+    .ticket-row span:last-child{text-align:right;font-weight:800}
+
+    .records-table-wrap{
+      overflow:auto;background:white;border-radius:28px;box-shadow:var(--shadow);
+      border:1px solid #e2e8f0
+    }
+    table{width:100%;border-collapse:collapse;min-width:1000px}
+    th{background:var(--navy);color:white;text-align:left;padding:16px;font-size:14px}
+    td{padding:15px;border-bottom:1px solid #e2e8f0;color:#334155}
+    tr:hover td{background:#f8fafc}
+    .empty{
+      text-align:center;padding:50px;background:white;border-radius:28px;
+      color:var(--muted);box-shadow:var(--shadow)
+    }
+
+    .contact-card{max-width:850px;margin:auto}
+    .contact-list{line-height:2;font-size:17px}
+    footer{text-align:center;background:var(--navy);color:#cbd5e1;padding:24px}
+
+    @media(max-width:900px){
+      header{
+        align-items:flex-start;
+        gap:12px;
+        flex-direction:column;
+        padding:14px 5%;
+      }
+      .logo{
+        font-size:18px;
+        line-height:1.2;
+      }
+      .logo-icon{
+        width:36px;
+        height:36px;
+        font-size:18px;
+      }
+      nav{
+        width:100%;
+        display:flex;
+        flex-wrap:wrap;
+        gap:8px;
+      }
+      nav a{
+        margin-left:0;
+        margin-right:0;
+        display:inline-block;
+        margin-top:0;
+        background:rgba(255,255,255,.10);
+        padding:9px 11px;
+        border-radius:999px;
+        font-size:12px;
+      }
+      section{
+        padding:45px 5%;
+      }
+      .home.active{
+        grid-template-columns:1fr;
+        min-height:auto;
+        padding-top:50px;
+        padding-bottom:50px;
+      }
+      .home h1{
+        font-size:34px;
+      }
+      .home p{
+        font-size:16px;
+      }
+      .reservation-box{
+        grid-template-columns:1fr;
+      }
+      .page-title h2{
+        font-size:30px;
+      }
+      .payment-options{
+        grid-template-columns:1fr;
+      }
+      .seats{
+        grid-template-columns:repeat(5, minmax(45px, 1fr));
+        gap:8px;
+      }
+      .seat{
+        padding:12px 8px;
+      }
+      .modal-content{
+        max-height:90vh;
+        overflow:auto;
+        border-radius:22px;
+      }
+      .boarding-preview{
+        transform:none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="logo"><div class="logo-icon">✈</div> Acson International Airport</div>
+  <nav>
+    <a onclick="showPage('home')">Home</a>
+    <a onclick="showPage('flights')">Flights</a>
+    <a onclick="showPage('reservations')">Reservations</a>
+    <a onclick="showPage('records')">Booking Records</a>
+    <a onclick="showPage('contact')">Contact</a>
+  </nav>
+</header>
+
+<section id="home" class="home active">
+  <div>
+    <div class="badge">🌍 International Premium Airline Reservation</div>
+    <h1>Elegant Flight Booking For Global Travelers</h1>
+    <p>
+      Reserve seats, choose your cabin, pay securely, and receive a professional e-ticket
+      instantly with Acson International Airport.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-gold" onclick="showPage('reservations')">Reserve Seat Now</button>
+      <button class="btn-light" onclick="showPage('flights')">View Flights</button>
+    </div>
+  </div>
+
+  <div class="premium-card">
+    <div class="boarding-preview">
+      <h3>Premium Boarding Pass</h3>
+      <div class="preview-row"><span>Airport</span><span>ACSON INTL</span></div>
+      <div class="preview-row"><span>Class</span><span>Business / Economy</span></div>
+      <div class="preview-row"><span>Seats</span><span>1 - 20</span></div>
+      <div class="preview-row"><span>Status</span><span>Online Booking</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="flights">
+  <div class="page-title">
+    <h2>Available International-Style Flights</h2>
+    <p>Choose your destination and proceed to seat reservation.</p>
+  </div>
+
+  <div class="grid">
+    <div class="flight-card">
+      <h3>Manila → Cebu</h3>
+      <div class="flight-meta">Departure: 8:00 AM<br>Flight No: ACS-101<br>Aircraft: Acson Elite A20</div>
+      <div class="price">₱2,500</div>
+      <button onclick="chooseFlight('Manila to Cebu')">Book Flight</button>
+    </div>
+    <div class="flight-card">
+      <h3>Manila → Davao</h3>
+      <div class="flight-meta">Departure: 1:30 PM<br>Flight No: ACS-204<br>Aircraft: Acson SkyJet</div>
+      <div class="price">₱3,200</div>
+      <button onclick="chooseFlight('Manila to Davao')">Book Flight</button>
+    </div>
+    <div class="flight-card">
+      <h3>Cebu → Iloilo</h3>
+      <div class="flight-meta">Departure: 6:45 PM<br>Flight No: ACS-318<br>Aircraft: Acson Regional</div>
+      <div class="price">₱1,900</div>
+      <button onclick="chooseFlight('Cebu to Iloilo')">Book Flight</button>
+    </div>
+  </div>
+</section>
+
+<section id="reservations">
+  <div class="page-title">
+    <h2>Premium Seat Reservation</h2>
+    <p>Business Class, Economy, Smoking, and Non-Smoking seat assignment.</p>
+  </div>
+
+  <div class="reservation-box">
+    <div class="glass">
+      <label>Passenger Full Name</label>
+      <input id="name" placeholder="Example: Juan Dela Cruz">
+
+      <label>Flight Route</label>
+      <select id="route">
+        <option value="Manila to Cebu">Manila to Cebu - ₱2,500</option>
+        <option value="Manila to Davao">Manila to Davao - ₱3,200</option>
+        <option value="Cebu to Iloilo">Cebu to Iloilo - ₱1,900</option>
+      </select>
+
+      <label>Class Type</label>
+      <select id="classType" onchange="loadSeats()">
+        <option value="">Select class</option>
+        <option value="Business Class">Business Class Seats 1-10</option>
+        <option value="Economy">Economy Seats 11-20</option>
+      </select>
+
+      <label>Area</label>
+      <select id="area" onchange="loadSeats()">
+        <option value="">Select area</option>
+        <option value="Smoking">Smoking</option>
+        <option value="Non-Smoking">Non-Smoking</option>
+      </select>
+
+      <label>Available Seats</label>
+      <div class="seats" id="seats"></div>
+
+      <button style="width:100%;margin-top:24px" onclick="openPayment()">Reserve Seat & Pay</button>
+    </div>
+
+    <div class="info-card">
+      <h3 style="font-size:26px;color:var(--navy);margin-bottom:15px">Seat Guide</h3>
+      <p><b>Business Class:</b> Seats 1-10</p>
+      <p>Smoking: 1-5 | Non-Smoking: 6-10</p><br>
+      <p><b>Economy:</b> Seats 11-20</p>
+      <p>Smoking: 11-15 | Non-Smoking: 16-20</p>
+
+      <div class="ticket" id="ticket">
+        <h3>🎫 Acson Official E-Ticket</h3>
+        <div class="ticket-row"><b>Ticket No.</b><span id="tNo"></span></div>
+        <div class="ticket-row"><b>Passenger</b><span id="tName"></span></div>
+        <div class="ticket-row"><b>Route</b><span id="tRoute"></span></div>
+        <div class="ticket-row"><b>Class</b><span id="tClass"></span></div>
+        <div class="ticket-row"><b>Area</b><span id="tArea"></span></div>
+        <div class="ticket-row"><b>Seat</b><span id="tSeat"></span></div>
+        <div class="ticket-row"><b>Payment</b><span id="tPay"></span></div>
+        <div class="ticket-row"><b>Status</b><span style="color:green">PAID / CONFIRMED</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="records">
+  <div class="page-title">
+    <h2>Passenger Booking Records</h2>
+    <p>View all passengers who successfully reserved and paid for a ticket.</p>
+  </div>
+
+  <div id="emptyRecords" class="empty">
+    <h3>No booking records yet.</h3>
+    <p>After a passenger pays, the record will appear here automatically.</p>
+  </div>
+
+  <div id="recordsTable" class="records-table-wrap" style="display:none">
+    <table>
+      <thead>
+        <tr>
+          <th>Ticket No.</th>
+          <th>Passenger</th>
+          <th>Route</th>
+          <th>Class</th>
+          <th>Area</th>
+          <th>Seat</th>
+          <th>Payment</th>
+          <th>Reference</th>
+          <th>Status</th>
+          <th>Date Booked</th>
+        </tr>
+      </thead>
+      <tbody id="recordsBody"></tbody>
+    </table>
+  </div>
+
+  <button class="btn-danger" style="margin-top:20px" onclick="clearRecords()">Clear Records</button>
+</section>
+
+<section id="contact">
+  <div class="page-title">
+    <h2>Contact Acson International Airport</h2>
+    <p>Professional customer support for airline reservations.</p>
+  </div>
+
+  <div class="contact-card">
+    <div class="contact-list">
+      <p><b>Email:</b> support@acsonairport.com</p>
+      <p><b>Phone:</b> +63 912 345 6789</p>
+      <p><b>Address:</b> Acson Terminal Road, Philippines</p>
+      <p><b>Office Hours:</b> Monday to Sunday, 6:00 AM - 10:00 PM</p>
+      <p><b>Services:</b> Online booking, seat reservation, payment confirmation, and e-ticket generation.</p>
+    </div>
+  </div>
+</section>
+
+<div class="modal" id="paymentModal">
+  <div class="modal-content">
+    <h2 style="color:var(--navy)">Secure Payment</h2>
+    <p style="color:var(--muted);margin-top:8px">Select your payment method to finalize your booking.</p>
+
+    <div class="payment-options">
+      <button class="pay" onclick="selectPayment('GCash', this)">GCash</button>
+      <button class="pay" onclick="selectPayment('Maya', this)">Maya</button>
+      <button class="pay" onclick="selectPayment('BDO', this)">BDO</button>
+      <button class="pay" onclick="selectPayment('BPI', this)">BPI</button>
+      <button class="pay" onclick="selectPayment('Metrobank', this)">Metrobank</button>
+      <button class="pay" onclick="selectPayment('Credit/Debit Card', this)">Card</button>
+    </div>
+
+    <label>Payment Reference Number</label>
+    <input id="refNo" placeholder="Enter your payment reference number">
+
+    <button style="width:100%;margin-top:18px" onclick="confirmPayment()">Confirm Payment</button>
+    <button class="btn-dark" style="width:100%;margin-top:10px" onclick="closePayment()">Cancel</button>
+  </div>
+</div>
+
+<footer>
+  © 2026 Acson International Airport. Premium Airline Reservation System.
+</footer>
+
+<script>
+  let selectedSeat = null;
+  let selectedPayment = "";
+  function safeGet(key, fallback){
+    try {
+      return JSON.parse(localStorage.getItem(key)) || fallback;
+    } catch(e) {
+      return fallback;
+    }
+  }
+
+  function safeSet(key, value){
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch(e) {
+      console.log("Storage is not available on this browser.");
+    }
+  }
+
+  let bookedSeats = safeGet("bookedSeats", []);
+  let bookingRecords = safeGet("bookingRecords", []);
+
+  const prices = {
+    "Manila to Cebu": "₱2,500",
+    "Manila to Davao": "₱3,200",
+    "Cebu to Iloilo": "₱1,900"
+  };
+
+  function showPage(pageId){
+    document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
+    document.getElementById(pageId).classList.add("active");
+    if(pageId === "records") renderRecords();
+    window.scrollTo(0,0);
+  }
+
+  function chooseFlight(route){
+    document.getElementById("route").value = route;
+    showPage("reservations");
+  }
+
+  function getSeatRange(classType, area){
+    if(classType==="Business Class" && area==="Smoking") return [1,5];
+    if(classType==="Business Class" && area==="Non-Smoking") return [6,10];
+    if(classType==="Economy" && area==="Smoking") return [11,15];
+    if(classType==="Economy" && area==="Non-Smoking") return [16,20];
+    return null;
+  }
+
+  function loadSeats(){
+    const classType = document.getElementById("classType").value;
+    const area = document.getElementById("area").value;
+    const seatsBox = document.getElementById("seats");
+    seatsBox.innerHTML = "";
+    selectedSeat = null;
+
+    const range = getSeatRange(classType, area);
+    if(!range) return;
+
+    for(let i = range[0]; i <= range[1]; i++){
+      const seat = document.createElement("div");
+      seat.className = "seat";
+      seat.textContent = i;
+
+      if(bookedSeats.includes(i)){
+        seat.classList.add("booked");
+      } else {
+        seat.onclick = function(){
+          document.querySelectorAll(".seat").forEach(s => s.classList.remove("selected"));
+          seat.classList.add("selected");
+          selectedSeat = i;
+        };
+      }
+
+      seatsBox.appendChild(seat);
+    }
+  }
+
+  function openPayment(){
+    const name = document.getElementById("name").value.trim();
+    const classType = document.getElementById("classType").value;
+    const area = document.getElementById("area").value;
+
+    if(!name || !classType || !area || !selectedSeat){
+      alert("Please complete the reservation form and select a seat.");
+      return;
+    }
+
+    document.getElementById("paymentModal").classList.add("active");
+  }
+
+  function closePayment(){
+    document.getElementById("paymentModal").classList.remove("active");
+  }
+
+  function selectPayment(method, btn){
+    selectedPayment = method;
+    document.querySelectorAll(".pay").forEach(p => p.classList.remove("selected"));
+    btn.classList.add("selected");
+  }
+
+  function confirmPayment(){
+    const refNo = document.getElementById("refNo").value.trim();
+    const name = document.getElementById("name").value.trim();
+    const route = document.getElementById("route").value;
+    const classType = document.getElementById("classType").value;
+    const area = document.getElementById("area").value;
+
+    if(!selectedPayment){
+      alert("Please select a payment method.");
+      return;
+    }
+
+    if(!refNo){
+      alert("Please enter your payment reference number.");
+      return;
+    }
+
+    const ticketNo = "ACS-" + Math.floor(100000 + Math.random() * 900000);
+    const dateBooked = new Date().toLocaleString();
+
+    const record = {
+      ticketNo,
+      name,
+      route,
+      classType,
+      area,
+      seat: selectedSeat,
+      payment: selectedPayment,
+      reference: refNo,
+      price: prices[route],
+      status: "PAID / CONFIRMED",
+      dateBooked
+    };
+
+    bookedSeats.push(selectedSeat);
+    bookingRecords.push(record);
+
+    safeSet("bookedSeats", bookedSeats);
+    safeSet("bookingRecords", bookingRecords);
+
+    document.getElementById("tNo").textContent = ticketNo;
+    document.getElementById("tName").textContent = name;
+    document.getElementById("tRoute").textContent = route + " - " + prices[route];
+    document.getElementById("tClass").textContent = classType;
+    document.getElementById("tArea").textContent = area;
+    document.getElementById("tSeat").textContent = selectedSeat;
+    document.getElementById("tPay").textContent = selectedPayment + " / Ref: " + refNo;
+
+    document.getElementById("ticket").style.display = "block";
+    closePayment();
+    loadSeats();
+    renderRecords();
+
+    alert("Payment successful! Your e-ticket has been generated and saved to booking records.");
+  }
+
+  function renderRecords(){
+    const empty = document.getElementById("emptyRecords");
+    const table = document.getElementById("recordsTable");
+    const body = document.getElementById("recordsBody");
+
+    body.innerHTML = "";
+
+    if(bookingRecords.length === 0){
+      empty.style.display = "block";
+      table.style.display = "none";
+      return;
+    }
+
+    empty.style.display = "none";
+    table.style.display = "block";
+
+    bookingRecords.forEach(record => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td><b>${record.ticketNo}</b></td>
+        <td>${record.name}</td>
+        <td>${record.route}</td>
+        <td>${record.classType}</td>
+        <td>${record.area}</td>
+        <td>${record.seat}</td>
+        <td>${record.payment}</td>
+        <td>${record.reference}</td>
+        <td><span class="status-pill">${record.status}</span></td>
+        <td>${record.dateBooked}</td>
+      `;
+      body.appendChild(row);
+    });
+  }
+
+  function clearRecords(){
+    if(confirm("Are you sure you want to clear all booking records and booked seats?")){
+      bookingRecords = [];
+      bookedSeats = [];
+      try {
+        localStorage.removeItem("bookingRecords");
+        localStorage.removeItem("bookedSeats");
+      } catch(e) {
+        console.log("Storage is not available on this browser.");
+      }
+      renderRecords();
+      loadSeats();
+      alert("All booking records have been cleared.");
+    }
+  }
+
+  renderRecords();
+  loadSeats();
+</script>
+</body>
+</html>
